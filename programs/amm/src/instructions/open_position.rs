@@ -18,7 +18,6 @@ use anchor_spl::token_2022::{
     spl_token_2022::{self, instruction::AuthorityType},
 };
 use anchor_spl::token_interface;
-use mpl_token_metadata::{instruction::create_metadata_accounts_v3, state::Creator};
 use std::cell::RefMut;
 #[cfg(feature = "enable-log")]
 use std::convert::identity;
@@ -835,40 +834,6 @@ fn initialize_metadata_account<'info>(
     uri: String,
     signers_seeds: &[&[&[u8]]],
 ) -> Result<()> {
-    let create_metadata_ix = create_metadata_accounts_v3(
-        metadata_program.key(),
-        metadata_account.key(),
-        position_nft_mint.key(),
-        authority.key(),
-        payer.key(),
-        authority.key(),
-        name,
-        symbol,
-        uri,
-        Some(vec![Creator {
-            address: authority.key(),
-            verified: true,
-            share: 100,
-        }]),
-        0,
-        true,
-        false,
-        None,
-        None,
-        None,
-    );
-    solana_program::program::invoke_signed(
-        &create_metadata_ix,
-        &[
-            metadata_account.to_account_info(),
-            position_nft_mint.to_account_info(),
-            payer.to_account_info(),
-            authority.to_account_info(),
-            system_program.to_account_info(),
-            rent.to_account_info(),
-        ],
-        signers_seeds,
-    )?;
 
     Ok(())
 }
